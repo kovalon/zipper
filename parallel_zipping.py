@@ -113,6 +113,7 @@ def parse_databox(databox: list):
 
 
 if __name__ == '__main__':
+    os.mkdir('result')
     dir_list = os.listdir('result')
     cores = multiprocessing.cpu_count()
     sub_lists = [[] for i in range(cores)]
