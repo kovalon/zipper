@@ -9,8 +9,6 @@ import glob
 import time
 import multiprocessing
 
-import psutil as psutil
-
 number = 10
 count = 100
 
@@ -93,8 +91,8 @@ def define_data(file):
     file1 = open(os.path.join(divided[0], divided[1], divided[1] + '_levels.csv'), 'w', newline='', encoding='utf-8')
     file2 = open(os.path.join(divided[0], divided[1], divided[1] + '_objects.csv'), 'w', newline='', encoding='utf-8')
     levels = csv.writer(file1)
-    levels.writerow(['id', 'level'])
     obj = csv.writer(file2)
+    levels.writerow(['id', 'level'])
     obj.writerow(['id', 'object_name'])
     with zipfile.ZipFile(file, 'r') as archive:
         for i in range(count):
@@ -116,7 +114,7 @@ def parse_databox(databox: list):
 
 if __name__ == '__main__':
     dir_list = os.listdir('result')
-    cores = psutil.cpu_count(logical=False)
+    cores = multiprocessing.cpu_count()
     sub_lists = [[] for i in range(cores)]
     for i in range(len(dir_list)):
         try:
@@ -126,12 +124,10 @@ if __name__ == '__main__':
             break
     processes = []
     zip_files()
-    start = time.perf_counter()
     for i in range(cores):
-        p =  multiprocessing.Process(target=parse_databox, args=[sub_lists[i]])
+        p = multiprocessing.Process(target=parse_databox, args=(sub_lists[i], ))
         p.start()
         processes.append(p)
     for p in processes:
         p.join()
-    stop = time.perf_counter()                          
-    print('Total time: {} seconds'.format(stop - start))
+    print('DONE')
