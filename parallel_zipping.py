@@ -113,6 +113,9 @@ def parse_databox(databox: list):
 
 
 if __name__ == '__main__':
+    if not os.path.exists('result'):
+        os.mkdir('result')
+    zip_files()
     dir_list = os.listdir('result')
     cores = multiprocessing.cpu_count()
     sub_lists = [[] for i in range(cores)]
@@ -123,10 +126,9 @@ if __name__ == '__main__':
         except:
             break
     processes = []
-    zip_files()
     start = time.perf_counter()
     for i in range(cores):
-        p =  multiprocessing.Process(target=parse_databox, args=[sub_lists[i]])
+        p = multiprocessing.Process(target=parse_databox, args=(sub_lists[i], ))
         p.start()
         processes.append(p)
     for p in processes:
