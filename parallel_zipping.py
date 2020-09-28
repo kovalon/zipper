@@ -91,8 +91,8 @@ def define_data(file):
     file1 = open(os.path.join(divided[0], divided[1], divided[1] + '_levels.csv'), 'w', newline='', encoding='utf-8')
     file2 = open(os.path.join(divided[0], divided[1], divided[1] + '_objects.csv'), 'w', newline='', encoding='utf-8')
     levels = csv.writer(file1)
-    obj = csv.writer(file2)
     levels.writerow(['id', 'level'])
+    obj = csv.writer(file2)
     obj.writerow(['id', 'object_name'])
     with zipfile.ZipFile(file, 'r') as archive:
         for i in range(count):
@@ -113,7 +113,6 @@ def parse_databox(databox: list):
 
 
 if __name__ == '__main__':
-    os.mkdir('result')
     dir_list = os.listdir('result')
     cores = multiprocessing.cpu_count()
     sub_lists = [[] for i in range(cores)]
@@ -125,10 +124,12 @@ if __name__ == '__main__':
             break
     processes = []
     zip_files()
+    start = time.perf_counter()
     for i in range(cores):
-        p = multiprocessing.Process(target=parse_databox, args=(sub_lists[i], ))
+        p =  multiprocessing.Process(target=parse_databox, args=[sub_lists[i]])
         p.start()
         processes.append(p)
     for p in processes:
         p.join()
-    print('DONE')
+    stop = time.perf_counter()
+    print('Total time: {} seconds'.format(stop - start))
